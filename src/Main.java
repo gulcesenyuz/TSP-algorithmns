@@ -14,23 +14,24 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         ArrayList<Town> cities = dataInput(file, false);
-
         Instant start = Instant.now();
-        System.out.println("Greedy Algorithm");
+        System.out.println("Greedy Algorithm \n" + "Shortest Distance:  ");
         greedy(cities);
         Instant end = Instant.now();
         System.out.print("Total time elapsed :");
         System.out.println(Duration.between(start, end));
         System.out.println();
         start = Instant.now();
-        System.out.println("Nearest Neighbor  :\n" + totalDistanceCalculator(NearestNeigborTownFinder(cities, 6)));
+        System.out.println("Nearest Neighbor\n" + "Shortest Distance:  "
+                + totalDistanceCalculator(NearestNeigborTownFinder(cities)));
         end = Instant.now();
+
         System.out.print("Total time elapsed :");
         System.out.println(Duration.between(start, end));
         System.out.println();
         System.out.println("Divide and Conquer ");
         start = Instant.now();
-        System.out.println(totalDistanceCalculator(divideAndConquer(cities)));
+        System.out.println("Shortest Distance:  " + totalDistanceCalculator(divideAndConquer(cities)));
         end = Instant.now();
         System.out.print("Total time elapsed :");
         System.out.println(Duration.between(start, end));
@@ -43,21 +44,25 @@ public class Main {
         ArrayList<Town> towns2 = new ArrayList<Town>();
         ArrayList<Town> towns1 = new ArrayList<Town>();
         for (Town object : towns) {
+            // calculate total x and y coordinates distance.
             totalX += (int) object.takeX();
-
             totalY += (int) object.takeY();
 
         }
+        // calculate middle point of total X coordinate distance
         int centerX = totalX / towns.size();
         // int centerY = totalY / towns.size();
 
         for (Town object : towns) {
+            // for each data of city list towms, compare its X coordinate with middle point
             if (object.takeX() >= centerX) {
+                // if X coordinate is greather than middle add cit to town2
                 towns2.add(object);
 
             } else
-                towns1.add(object);
+                // if X coordinate is smaller than middle add cit to town1
 
+                towns1.add(object);
         }
 
         Random random = new Random();
@@ -67,14 +72,14 @@ public class Main {
             int length1 = totalDistanceCalculator(towns1);
             int random1 = random.nextInt(test.size());
             int random2 = random.nextInt(test.size());
-
+            // get random 2 city
             Town first = test.get(random1);
             Town second = test.get(random2);
-
+            // replace 2 city to compare total ditance
             test.set(random2, first);
             test.set(random1, second);
             int length2 = totalDistanceCalculator(test);
-
+            // if the new list after swapping is smaller then store the list in town1
             if (length2 < length1) {
                 towns1 = (ArrayList<Town>) test.clone();
                 k = 0;
@@ -104,11 +109,12 @@ public class Main {
             }
 
         }
+        // calculate 2 list's elements distance
         double a = towns1.get(0).dictanceTo(towns2.get(0));
         double b = towns1.get(0).dictanceTo(towns2.get(towns2.size() - 1));
         double c = towns1.get(towns1.size() - 1).dictanceTo(towns2.get(0));
         double d = towns1.get(towns1.size() - 1).dictanceTo(towns2.get(towns2.size() - 1));
-
+        // add cities in order after comparing the values
         if (a < b && a < c && a < d) {
             for (Town object : towns2) {
                 towns1.add(0, object);
@@ -130,66 +136,34 @@ public class Main {
             }
         }
 
+        System.out.println("Divide And Conquer Tour Path :  " + towns1.toString());
+
         return towns1;
 
     }
 
-    public static ArrayList<Town> greedy(ArrayList<Town> imp_cities) {
+    public static void greedy(ArrayList<Town> imp_cities) {
         ArrayList<Town> citiess = (ArrayList<Town>) imp_cities.clone();
-        ArrayList<Segment> segmentArrayList = shortestWayComperator(citiess);
         int totalDist = 0;
+        ArrayList<Town> solutionCities = new ArrayList<Town>();
+        int random = (int) (Math.random() * citiess.size());
+        // choose a random start node
+        Town currentTown = imp_cities.get(random);
+        solutionCities.add(currentTown);
+        citiess.remove(random);
 
-        for (int i = 0; i < segmentArrayList.size(); i++) {
-            Town town1 = segmentArrayList.get(i).takeTown1();
-            Town town2 = segmentArrayList.get(i).takeTown2();
-            if (town1.isConnectionAvaible() && town2.isConnectionAvaible()) {
-                totalDist += segmentArrayList.get(i).takeDistance();
-                town1.plug(town2);
-                town2.plug(town1);
-                int next = citiess.indexOf(town1);
-                int num = -1;
-                int tour = 0;
-                while (true) {
-
-                    var c = citiess.get(next).getID();
-                    var con1 = citiess.get(next).getCon1();
-                    var con2 = citiess.get(next).getCon2();
-                    if (con1 == -1 || con2 == -1)
-                        break;
-                    if (!(num == -1) && con1 == num)
-                        next = con2;
-                    else
-                        next = con1;
-                    num = c;
-
-                    if (citiess.indexOf(town1) == next && !(tour == 0)) {
-                        // System.out.println("Yapılmaması gerken bağlantı bulundu");
-                        town1.unplug(town2);
-                        town2.unplug(town1);
-                        totalDist -= segmentArrayList.get(i).takeDistance();
-                        break;
-                    }
-
-                    tour++;
-
-                }
-
-            }
-
+        while (citiess.size() > 0) {
+            currentTown = solutionCities.get(solutionCities.size() - 1);
+            Town nearestNeighbor = getNearestNeighbor(currentTown, citiess);
+            double minDistance = distance(currentTown, nearestNeighbor);
+            solutionCities.add(nearestNeighbor);
+            citiess.remove(nearestNeighbor);
+            totalDist += minDistance;
         }
-        ArrayList<Town> lasts = new ArrayList<>();
-        for (Town object1 : citiess) {
-            if (object1.getCon2() == -1) {
-                lasts.add(object1);
-            }
-        }
+        totalDist += distance(solutionCities.get(solutionCities.size() - 1), solutionCities.get(0));
 
-        lasts.get(0).plug(lasts.get(1));
-        lasts.get(1).plug(lasts.get(0));
-
-        totalDist += lasts.get(0).dictanceTo(lasts.get(1));
-        System.out.println(totalDist);
-        return citiess;
+        System.out.println(solutionCities.toString());
+        System.out.println("Distance: " + totalDist);
     }
 
     public static ArrayList<Segment> shortestWayComperator(ArrayList<Town> imp_cities) {
@@ -201,7 +175,6 @@ public class Main {
                     continue;
                 }
                 segmentArrayList.add(new Segment(object, object2, object.dictanceTo(object2)));
-
             }
         }
 
@@ -228,27 +201,34 @@ public class Main {
         return cleanedSegmentArrayList;
     }
 
-    public static ArrayList<Town> NearestNeigborTownFinder(ArrayList<Town> unvisitedCitiesa, int start) {
+    public static ArrayList<Town> NearestNeigborTownFinder(ArrayList<Town> unvisitedCitiesa) {
+        // clone the input file into an arraylist that we created as unvisitedCities.
         ArrayList<Town> unvisitedCities = (ArrayList<Town>) unvisitedCitiesa.clone();
+        // arraylist to store the cities visited
         ArrayList<Town> visitedCities = new ArrayList<Town>();
         int unvisetedSize = unvisitedCities.size();
+        // get a random city id to define start point
+        Random random = new Random();
+        int start = random.nextInt(unvisitedCities.size());
         Town a = unvisitedCities.get(start);
         Town b;
         for (int z = 0; z < unvisetedSize; z++) {
             if (unvisitedCities.size() > 1) {
+                // calculate closest point of current city
                 b = a.closest(unvisitedCities);
                 visitedCities.add(a);
                 unvisitedCities.remove(a);
-                // System.out.println(a.getName());
+                // change next city to current
                 a = b;
             } else {
-
                 unvisitedCities.remove(a);
                 visitedCities.add(a);
 
             }
 
         }
+        System.out.println("Nearest Neigbor Tour Path:  " + visitedCities.toString());
+
         return visitedCities;
     }
 
@@ -270,6 +250,7 @@ public class Main {
     }
 
     private static ArrayList<Town> dataInput(String file, boolean print) {
+
         ArrayList<Town> citiesArr = new ArrayList<Town>();
         File f = new File(file);
 
@@ -304,5 +285,26 @@ public class Main {
             System.out.println(citiesArr);
 
         return citiesArr;
+    }
+
+    public static Town getNearestNeighbor(Town currentNode, ArrayList<Town> nodes) {
+        Town nearestNeighbor = null;
+        double minDistance = Double.MAX_VALUE;
+        for (int k = 0; k < nodes.size(); k++) {
+            Town neighbor = nodes.get(k);
+            double dist = distance(currentNode, neighbor);
+            // NOTE: using dist<= minDistance in the below conditional can yield different
+            // solution
+
+            if (dist < minDistance) {
+                minDistance = dist;
+                nearestNeighbor = neighbor;
+            }
+        }
+        return nearestNeighbor;
+    }
+
+    public static double distance(Town a, Town b) {
+        return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
     }
 }

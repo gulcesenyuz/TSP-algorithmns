@@ -5,8 +5,8 @@ import java.util.Random;
 
 public class Town {
 
-    private double x;
-    private double y;
+    public double x;
+    public double y;
 
     private int con1 = -1;
     private int con2 = -1;
@@ -26,9 +26,10 @@ public class Town {
     }
 
     public Town closest(ArrayList<Town> list) {
-
+        // create new object to store smallest city
         Town smallest;
         do {
+            // get a random city from the list to compare
             Random random = new Random();
             int index = random.nextInt(list.size());
             smallest = list.get(index);
@@ -37,6 +38,7 @@ public class Town {
         for (Town object : list) {
             if (!(this == object)) {
                 // System.out.println(dictanceTo(object));
+                // compare cities and store smallest one in smallest object
                 if (this.dictanceTo(object) < this.dictanceTo(smallest)) {
                     smallest = object;
                 }
@@ -87,6 +89,10 @@ public class Town {
             return false;
         else
             return true;
+    }
+
+    public String toString() {
+        return isim + "->";
     }
 
     public String takeName() {
