@@ -3,7 +3,7 @@ package Models;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Town {
+public class City {
 
     public double x;
     public double y;
@@ -14,20 +14,20 @@ public class Town {
     private final String isim;
     private final int num;
 
-    public Town(int num, String isim, String x, String y) {
+    public City(int num, String isim, String x, String y) {
         this.isim = isim;
         this.x = Double.parseDouble(x);
         this.y = Double.parseDouble(y);
         this.num = num;
     }
 
-    public double dictanceTo(Town town) {
+    public double dictanceTo(City town) {
         return Math.sqrt((town.y - this.y) * (town.y - this.y) + (town.x - this.x) * (town.x - this.x));
     }
 
-    public Town closest(ArrayList<Town> list) {
+    public City closest(ArrayList<City> list) {
         // create new object to store smallest city
-        Town smallest;
+        City smallest;
         do {
             // get a random city from the list to compare
             Random random = new Random();
@@ -35,7 +35,7 @@ public class Town {
             smallest = list.get(index);
         } while (smallest == this);
 
-        for (Town object : list) {
+        for (City object : list) {
             if (!(this == object)) {
                 // System.out.println(dictanceTo(object));
                 // compare cities and store smallest one in smallest object
@@ -55,7 +55,7 @@ public class Town {
         return con2;
     }
 
-    public void plug(Town town) {
+    public void plug(City town) {
         if (town.isConnectionAvaible() || town.con1 == this.getID() || town.con2 == this.getID()) {
             if (!isConnected(con1)) {
                 con1 = town.getID();
@@ -67,7 +67,7 @@ public class Town {
 
     }
 
-    public void unplug(Town town) {
+    public void unplug(City town) {
         var a = town.getID();
         if (a == con1) {
             con1 = -1;
