@@ -8,7 +8,7 @@ import Models.City;
 
 public class Main {
 
-    static String file = "C:/Users/gizem/Desktop/ca4663.tsp";
+    static String file = "C:/Users/gizem/Desktop/deneme.tsp";
 
     public static void main(String[] args) throws IOException {
 
@@ -21,8 +21,8 @@ public class Main {
         System.out.println(Duration.between(start, end));
         System.out.println();
         start = Instant.now();
-        System.out.println("Nearest Neighbor\n" + "Shortest Distance: "
-                + totalDistanceCalculator(NearestNeigborTownFinder(cities)));
+        System.out.println(
+                "Nearest Neighbor\n" + "Shortest Distance: " + totalDistanceCalculator(NearestNeigbor(cities)));
         end = Instant.now();
 
         System.out.print("Total time elapsed :");
@@ -164,50 +164,35 @@ public class Main {
     }
 
     public static void greedy(ArrayList<City> imp_cities) {
-        ArrayList<City> citiess = (ArrayList<City>) imp_cities.clone();
         int totalDist = 0;
+        ArrayList<City> citiess = (ArrayList<City>) imp_cities.clone();
         ArrayList<City> solutionCities = new ArrayList<City>();
         int random = (int) (Math.random() * citiess.size());
         // choose a random start node
-        City currentTown = imp_cities.get(random);
-        solutionCities.add(currentTown);
+        City currentCity = imp_cities.get(random);
+        // then add that the random Current city to solutionCities
+        solutionCities.add(currentCity);
+        // then remove from citiess array
         citiess.remove(random);
 
         while (citiess.size() > 0) {
-            currentTown = solutionCities.get(solutionCities.size() - 1);
-            City nearestNeighbor = getNearestNeighbor(currentTown, citiess);
-            double minDistance = distance(currentTown, nearestNeighbor);
+            // get the last item from solutionCities into currentCity
+            currentCity = solutionCities.get(solutionCities.size() - 1);
+            // get Nearest City
+            City nearestNeighbor = getNearestCity(currentCity, citiess);
+            // calculate the distance
+            double minDistance = distance(currentCity, nearestNeighbor);
             solutionCities.add(nearestNeighbor);
             citiess.remove(nearestNeighbor);
             totalDist += minDistance;
         }
         totalDist += distance(solutionCities.get(solutionCities.size() - 1), solutionCities.get(0));
-        File file = null;
 
-        try {
-            file = new File("C:/Users/gizem/Greedy.txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            for (City s : solutionCities) {
-                bw.write(s + System.getProperty("line.separator"));
-            }
-            bw.close();
-
-        }
-        // Handing Exception
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-
-        }
         System.out.println(solutionCities.toString());
         System.out.println("Distance: " + totalDist);
     }
 
-    public static ArrayList<City> NearestNeigborTownFinder(ArrayList<City> CityList) {
+    public static ArrayList<City> NearestNeigbor(ArrayList<City> CityList) {
         // clone the input file into an arraylist that we created as unvisitedCities.
         ArrayList<City> city_unvisited = (ArrayList<City>) CityList.clone();
         // arraylist to store the cities visited
@@ -301,25 +286,19 @@ public class Main {
         } catch (IOException e) {
             // Handle error...
         }
-        Collections.sort(cities, new Comparator<City>() {
-            @Override
-            public int compare(City o1, City o2) {
-                return Integer.parseInt(o1.takeName()) - Integer.parseInt(o2.takeName());
 
-            }
-        });
         if (print)
             System.out.println(cities);
 
         return cities;
     }
 
-    public static City getNearestNeighbor(City currentNode, ArrayList<City> nodes) {
+    public static City getNearestCity(City currentCity, ArrayList<City> cities) {
         City nearestNeighbor = null;
         double minDistance = Double.MAX_VALUE;
-        for (int k = 0; k < nodes.size(); k++) {
-            City neighbor = nodes.get(k);
-            double dist = distance(currentNode, neighbor);
+        for (int k = 0; k < cities.size(); k++) {
+            City neighbor = cities.get(k);
+            double dist = distance(currentCity, neighbor);
             // NOTE: using dist<= minDistance in the below conditional can yield different
             // solution
 
