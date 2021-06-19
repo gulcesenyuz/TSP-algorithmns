@@ -1,9 +1,10 @@
 package Models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class City {
+public class City implements Serializable {
 
     public double x;
     public double y;
@@ -47,52 +48,8 @@ public class City {
         return smallest;
     }
 
-    public int getCon1() {
-        return con1;
-    }
-
-    public int getCon2() {
-        return con2;
-    }
-
-    public void plug(City town) {
-        if (town.isConnectionAvaible() || town.con1 == this.getID() || town.con2 == this.getID()) {
-            if (!isConnected(con1)) {
-                con1 = town.getID();
-
-            } else if (!isConnected(con2) || town.con1 == this.getID() || town.con2 == this.getID()) {
-                con2 = town.getID();
-            }
-        }
-
-    }
-
-    public void unplug(City town) {
-        var a = town.getID();
-        if (a == con1) {
-            con1 = -1;
-        } else if (a == con2) {
-            con2 = -1;
-        }
-        // System.out.println(this.id+" to "+a+" disconnected.");
-    }
-
-    private boolean isConnected(int con) {
-        if (con == -1)
-            return false;
-        else
-            return true;
-    }
-
-    public boolean isConnectionAvaible() {
-        if (isConnected(con1) && isConnected(con2))
-            return false;
-        else
-            return true;
-    }
-
     public String toString() {
-        return isim + "->";
+        return isim;
     }
 
     public String takeName() {

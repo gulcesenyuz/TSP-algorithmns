@@ -14,14 +14,14 @@ public class Main {
 
         ArrayList<City> cities = dataInput(file, false);
         Instant start = Instant.now();
-        System.out.println("Greedy Algorithm \n" + "Shortest Distance:  ");
+        System.out.println("Greedy Algorithm \n" + "Shortest Distance: ");
         greedy(cities);
         Instant end = Instant.now();
         System.out.print("Total time elapsed :");
         System.out.println(Duration.between(start, end));
         System.out.println();
         start = Instant.now();
-        System.out.println("Nearest Neighbor\n" + "Shortest Distance:  "
+        System.out.println("Nearest Neighbor\n" + "Shortest Distance: "
                 + totalDistanceCalculator(NearestNeigborTownFinder(cities)));
         end = Instant.now();
 
@@ -30,13 +30,13 @@ public class Main {
         System.out.println();
         System.out.println("Divide and Conquer ");
         start = Instant.now();
-        System.out.println("Shortest Distance:  " + totalDistanceCalculator(divideAndConquer(cities)));
+        System.out.println("Shortest Distance: " + totalDistanceCalculator(divideAndConquer(cities)));
         end = Instant.now();
         System.out.print("Total time elapsed :");
         System.out.println(Duration.between(start, end));
     }
 
-    public static ArrayList<City> divideAndConquer(ArrayList imp_cities) {
+    public static ArrayList<City> divideAndConquer(ArrayList imp_cities) throws IOException {
         int totalX = 0;
         int totalY = 0;
         ArrayList<City> towns = imp_cities;
@@ -66,7 +66,7 @@ public class Main {
 
         Random random = new Random();
 
-        for (int k = 0; k < towns1.size(); k++) {
+        for (int k = 0; k < 10000; k++) {
             ArrayList<City> test = (ArrayList<City>) towns1.clone();
             int length1 = totalDistanceCalculator(towns1);
             int random1 = random.nextInt(test.size());
@@ -88,7 +88,7 @@ public class Main {
             }
 
         }
-        for (int k = 0; k < towns2.size(); k++) {
+        for (int k = 0; k < 10000; k++) {
             ArrayList<City> test = (ArrayList<City>) towns2.clone();
             int length1 = totalDistanceCalculator(towns2);
             int random1 = random.nextInt(test.size());
@@ -137,6 +137,28 @@ public class Main {
 
         System.out.println("Divide And Conquer Tour Path :  " + towns1.toString());
 
+        // write to file
+        File file = null;
+
+        try {
+            file = new File("C:/Users/gizem/Dnc.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            for (City s : towns1) {
+                bw.write(s + System.getProperty("line.separator"));
+            }
+            bw.close();
+
+        }
+        // Handing Exception
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
         return towns1;
 
     }
@@ -160,7 +182,27 @@ public class Main {
             totalDist += minDistance;
         }
         totalDist += distance(solutionCities.get(solutionCities.size() - 1), solutionCities.get(0));
+        File file = null;
 
+        try {
+            file = new File("C:/Users/gizem/Greedy.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            for (City s : solutionCities) {
+                bw.write(s + System.getProperty("line.separator"));
+            }
+            bw.close();
+
+        }
+        // Handing Exception
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
         System.out.println(solutionCities.toString());
         System.out.println("Distance: " + totalDist);
     }
@@ -189,6 +231,27 @@ public class Main {
                 city_visited.add(current);
 
             }
+
+        }
+        File file = null;
+
+        try {
+            file = new File("C:/Users/gizem/NN.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            for (City s : city_visited) {
+                bw.write(s + System.getProperty("line.separator"));
+            }
+            bw.close();
+
+        }
+        // Handing Exception
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
 
         }
         System.out.println("Nearest Neigbor Tour Path:  " + city_visited.toString());
@@ -225,7 +288,7 @@ public class Main {
             String name;
             int id;
 
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 7; i++) {
                 input.nextLine();
             }
             while (input.hasNext()) {
